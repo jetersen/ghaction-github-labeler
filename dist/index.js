@@ -412,7 +412,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const fs = __importStar(__webpack_require__(5747));
 const core = __importStar(__webpack_require__(2186));
 const context_1 = __webpack_require__(3842);
 const labeler_1 = __webpack_require__(5272);
@@ -420,10 +419,6 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const inputs = yield context_1.getInputs();
-            if (!fs.existsSync(inputs.yamlFile)) {
-                core.setFailed(`Cannot find YAML file ${inputs.yamlFile}`);
-                return;
-            }
             const labeler = new labeler_1.Labeler(inputs);
             yield labeler.printRepoLabels();
             core.info(`🏃 Running GitHub Labeler`);
