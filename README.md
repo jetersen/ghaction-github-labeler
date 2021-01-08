@@ -15,14 +15,15 @@ If you are interested, [check out](https://git.io/Je09Y) my other :octocat: GitH
 
 ___
 
-* [Usage](#usage)
-  * [YAML configuration](#yaml-configuration)
-  * [Workflow](#workflow)
-* [Customizing](#customizing)
-  * [inputs](#inputs)
-* [Keep up-to-date with GitHub Dependabot](#keep-up-to-date-with-github-dependabot)
-* [How can I help?](#how-can-i-help)
-* [License](#license)
+- [About](#about)
+- [Usage](#usage)
+  - [YAML configuration](#yaml-configuration)
+  - [Workflow](#workflow)
+- [Customizing](#customizing)
+  - [inputs](#inputs)
+- [Keep up-to-date with GitHub Dependabot](#keep-up-to-date-with-github-dependabot)
+- [How can I help?](#how-can-i-help)
+- [License](#license)
 
 ## Usage
 
@@ -63,9 +64,6 @@ jobs:
   labeler:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v2
       -
         name: Run Labeler
         if: success()
