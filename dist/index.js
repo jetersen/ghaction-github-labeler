@@ -125,8 +125,8 @@ var LabelStatus;
     LabelStatus[LabelStatus["Error"] = 6] = "Error";
 })(LabelStatus = exports.LabelStatus || (exports.LabelStatus = {}));
 class Labeler {
-    constructor(inputs, options = {}) {
-        const octokit = utils_1.GitHub.plugin(octokit_plugin_config_1.config).defaults(options);
+    constructor(inputs) {
+        const octokit = utils_1.GitHub.plugin(octokit_plugin_config_1.config);
         this.octokit = new octokit(utils_1.getOctokitOptions(inputs.githubToken));
         this.dryRun = inputs.dryRun;
         this.skipDelete = inputs.skipDelete;
@@ -277,7 +277,7 @@ class Labeler {
                     configs
                         .map(config => {
                         const labels = config.labels ? config.labels : config;
-                        return { labels: labels || [] };
+                        return { labels };
                     })
                         .map(config => {
                         config.labels.forEach(function (item) {
