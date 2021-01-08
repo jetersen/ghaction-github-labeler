@@ -3,8 +3,6 @@ import nock from 'nock';
 import {Inputs} from '../src/context';
 import {Labeler, LabelStatus} from '../src/labeler';
 
-process.env.GITHUB_REPOSITORY = 'crazy-max/ghaction-github-labeler';
-
 function configFixture(fileName: string) {
   return fs.readFileSync(`${__dirname}/../${fileName}`);
 }
@@ -85,12 +83,13 @@ describe('run', () => {
     nock.enableNetConnect();
   });
   test.each(cases)('given %p', async (name, inputs, expected) => {
+    process.env.GITHUB_REPOSITORY = 'crazy-max/ghaction-github-labeler';
     const input = inputs as Inputs;
 
     nock('https://api.github.com').get('/repos/crazy-max/ghaction-github-labeler/labels').reply(200, labelsFixture());
 
     nock('https://api.github.com')
-      .get(`/repos/crazy-max/ghaction-github-labeler/contents/${encodeURIComponent(input.yamlFile as string)}`)
+      .get(`/repos/jetersen/ghaction-github-labeler/contents/${encodeURIComponent(input.yamlFile as string)}`)
       .reply(200, configFixture(input.yamlFile as string));
 
     const labeler = new Labeler(input);
@@ -146,4 +145,31 @@ describe('run', () => {
     expect(res).toEqual(expected);
     expect(() => labeler.run()).not.toThrow();
   });
+  it('merge', async () => {
+    process.env.GITHUB_REPOSITORY = 'crazy-max/ghaction-github-labeler';
+    const input = <Inputs>{
+      githubToken: process.env.GITHUB_TOKEN || 'test',
+      yamlFile: '.res/labels.merge2.yml',
+      skipDelete: true,
+      dryRun: true,
+      exclude: []
+    }
+    nock('https://api.github.com').get('/repos/crazy-max/ghaction-github-labeler/labels').reply(200, labelsFixture());
+
+    nock('https://api.github.com')
+      .get(`/repos/crazy-max/ghaction-github-labeler/contents/${encodeURIComponent(input.yamlFile as string)}`)
+      .reply(200, configFixture(input.yamlFile as string));
+
+    nock('https://api.github.com')
+      .get(`/repos/crazy-max/ghaction-github-labeler/contents/${encodeURIComponent('.res/labels.merge1.yml')}`)
+      .reply(200, configFixture('.res/labels.merge1.yml'));
+
+    const labeler = new Labeler(input);
+    const fileLabels = await labeler.fileLabels;
+    expect(fileLabels.length).toBe(16)
+    expect(fileLabels[15]).toEqual(expect.objectContaining({ name: ":unicorn: Special" }))
+    expect(fileLabels[0]).toEqual(expect.objectContaining({ name: ":robot: bot", description: "I am robot" }))
+    expect(fileLabels[1]).toEqual(expect.objectContaining({ name: ":bug: bug", description: "Damn bugs" }))
+    expect(() => labeler.run()).not.toThrow();
+  })
 });

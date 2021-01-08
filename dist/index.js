@@ -272,9 +272,28 @@ class Labeler {
     }
     loadLabelsFromYAML(yamlFile) {
         return __awaiter(this, void 0, void 0, function* () {
-            const labels = yield this.octokit.config
-                .get(Object.assign(Object.assign({}, utils_1.context.repo), { path: yamlFile }))
-                .then(res => Object.values(res.config));
+            const { config: { labels } } = yield this.octokit.config
+                .get(Object.assign(Object.assign({}, utils_1.context.repo), { path: yamlFile, defaults(configs) {
+                    const output = [];
+                    configs.map(config => {
+                        const labels = config.labels ? config.labels : config;
+                        return { labels };
+                    }).map(config => {
+                        config.labels.forEach(function (item) {
+                            var existing = output.filter(function (v, i) {
+                                return v.name == item.name;
+                            });
+                            if (existing.length) {
+                                var existingIndex = output.indexOf(existing[0]);
+                                output[existingIndex] = item;
+                            }
+                            else {
+                                output.push(item);
+                            }
+                        });
+                    });
+                    return { labels: output };
+                } }));
             return labels;
         });
     }
