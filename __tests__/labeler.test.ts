@@ -72,7 +72,7 @@ const cases = [
   ]
 ];
 
-const orginalGitHubRepo = process.env.GITHUB_REPOSITORY
+const orginalGitHubRepo = process.env.GITHUB_REPOSITORY;
 
 describe('run', () => {
   beforeAll(() => {
@@ -155,7 +155,7 @@ describe('run', () => {
       skipDelete: true,
       dryRun: true,
       exclude: []
-    }
+    };
     nock('https://api.github.com').get('/repos/crazy-max/ghaction-github-labeler/labels').reply(200, labelsFixture());
 
     nock('https://api.github.com')
@@ -168,10 +168,10 @@ describe('run', () => {
 
     const labeler = new Labeler(input);
     const fileLabels = await labeler.fileLabels;
-    expect(fileLabels.length).toBe(16)
-    expect(fileLabels[15]).toEqual(expect.objectContaining({ name: ":unicorn: Special" }))
-    expect(fileLabels[0]).toEqual(expect.objectContaining({ name: ":robot: bot", description: "I am robot" }))
-    expect(fileLabels[1]).toEqual(expect.objectContaining({ name: ":bug: bug", description: "Damn bugs" }))
+    expect(fileLabels.length).toBe(16);
+    expect(fileLabels[15]).toEqual(expect.objectContaining({name: ':unicorn: Special'}));
+    expect(fileLabels[0]).toEqual(expect.objectContaining({name: ':robot: bot', description: 'I am robot'}));
+    expect(fileLabels[1]).toEqual(expect.objectContaining({name: ':bug: bug', description: 'Damn bugs'}));
     expect(() => labeler.run()).not.toThrow();
-  })
+  });
 });
