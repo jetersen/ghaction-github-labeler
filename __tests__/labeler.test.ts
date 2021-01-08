@@ -72,24 +72,27 @@ const cases = [
   ]
 ];
 
+const orginalGitHubRepo = process.env.GITHUB_REPOSITORY
+
 describe('run', () => {
   beforeAll(() => {
+    process.env.GITHUB_REPOSITORY = 'crazy-max/ghaction-github-labeler';
     nock.disableNetConnect();
     // nock.recorder.rec();
   });
   afterAll(() => {
+    process.env.GITHUB_REPOSITORY = orginalGitHubRepo;
     // nock.restore()
     nock.cleanAll();
     nock.enableNetConnect();
   });
   test.each(cases)('given %p', async (name, inputs, expected) => {
-    process.env.GITHUB_REPOSITORY = 'crazy-max/ghaction-github-labeler';
     const input = inputs as Inputs;
 
     nock('https://api.github.com').get('/repos/crazy-max/ghaction-github-labeler/labels').reply(200, labelsFixture());
 
     nock('https://api.github.com')
-      .get(`/repos/jetersen/ghaction-github-labeler/contents/${encodeURIComponent(input.yamlFile as string)}`)
+      .get(`/repos/crazy-max/ghaction-github-labeler/contents/${encodeURIComponent(input.yamlFile as string)}`)
       .reply(200, configFixture(input.yamlFile as string));
 
     const labeler = new Labeler(input);
@@ -146,7 +149,6 @@ describe('run', () => {
     expect(() => labeler.run()).not.toThrow();
   });
   it('merge', async () => {
-    process.env.GITHUB_REPOSITORY = 'crazy-max/ghaction-github-labeler';
     const input = <Inputs>{
       githubToken: process.env.GITHUB_TOKEN || 'test',
       yamlFile: '.res/labels.merge2.yml',
