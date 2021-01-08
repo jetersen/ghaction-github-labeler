@@ -277,7 +277,7 @@ class Labeler {
                     configs
                         .map(config => {
                         const labels = config.labels ? config.labels : config;
-                        return { labels };
+                        return { labels: labels || [] };
                     })
                         .map(config => {
                         config.labels.forEach(function (item) {
